@@ -1,25 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./App.css";
+import Input from "./components/Input";
+
+// TODO: Use `useReducer` to manage complex state - CRUD
 
 function App() {
-  // Create the count state.
-  const [count, setCount] = useState(0);
-  // Update the count (+1 every second).
-  // This runs on the initial render and every time the count changes.
-  useEffect(() => {
-    setTimeout(() => setCount(count + 1), 1000);
+  const [todos, setTodos] = React.useState([]);
 
-    // ⚠️ Not clearing the timeout could cause a memory leak.
-  });
-  // Return the App component.
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    const newTodo = form.elements[0].value.trim();
+    if (newTodo) {
+      setTodos((prevTodos) =>
+        prevTodos.concat({
+          id: prevTodos.length + 1,
+          text: newTodo,
+        })
+      );
+    }
+
+    form.reset();
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Page has been open for {count} seconds.
-        </p>
-      </header>
-    </div>
+    <>
+      <form onSubmit={handleSubmit}>
+        <Input />
+        <button
+          type="submit"
+          className="bg-green-500 ml-1 p-4 rounded-sm text-white"
+        >
+          Add Todo
+        </button>
+      </form>
+
+      <ol>
+        {todos.map(({ id, text }) => (
+          <li key={id}>{text}</li>
+        ))}
+      </ol>
+    </>
   );
 }
 
